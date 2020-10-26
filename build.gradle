@@ -1,0 +1,57 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'java'
+}
+
+group = 'com.point.api'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	//JPA 의존성 추가
+	//스프링 부트용 Spring Data Jpa 추상화 라이브러리
+	//스프링 부트 버전에 맞춰 자동으로 JPA관련 라이브러리들의 버전을 관리해줌
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '2.6.2'
+	// 롬복
+	// 이거 추가해야 한다 gradle 5버전부터는..
+	annotationProcessor("org.projectlombok:lombok")
+	compileOnly 'org.projectlombok:lombok'
+	// 데브툴스
+	// 테스트 환경에서만 실행되도록
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	// H2 디비
+	runtimeOnly 'com.h2database:h2'
+	// 스프링 테스트
+	// Junit 5 -> 4로 변경
+	//	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+	//		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	//	}
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	//스웨거 추가
+	//블로그에서 2.6.1버전을 추천하더라
+	implementation 'io.springfox:springfox-swagger2:2.6.1'
+	implementation 'io.springfox:springfox-swagger-ui:2.6.1'
+	//gson
+	implementation 'com.google.code.gson:gson:2.8.6'
+}
+
+test {
+//	useJUnitPlatform()
+	useJUnitPlatform {
+		includeEngines 'junit-vintage'
+		// excludeEngines 'junit-jupiter'
+	}
+}
