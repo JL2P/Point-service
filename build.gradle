@@ -29,11 +29,8 @@ dependencies {
 	// 이거 추가해야 한다 gradle 5버전부터는..
 	annotationProcessor("org.projectlombok:lombok")
 	compileOnly 'org.projectlombok:lombok'
-	// 데브툴스
-	// 테스트 환경에서만 실행되도록
+	// 데브툴즈
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	// H2 디비
-	runtimeOnly 'com.h2database:h2'
 	// 스프링 테스트
 	// Junit 5 -> 4로 변경
 	//	testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -46,6 +43,12 @@ dependencies {
 	implementation 'io.springfox:springfox-swagger-ui:2.6.1'
 	//gson
 	implementation 'com.google.code.gson:gson:2.8.6'
+
+	// JWT
+	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	compile group: 'org.springframework.security', name: 'spring-security-core', version: '5.3.3.RELEASE'
+	compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '2.3.3.RELEASE'
+	compile group: 'org.springframework.security', name: 'spring-security-jwt', version: '1.1.0.RELEASE'
 }
 
 test {

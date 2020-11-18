@@ -1,6 +1,11 @@
 server:
   port: 9004
 
+security:
+  oauth2:
+    jwt:
+      signkey: planit
+
 spring:
   devtools:
     livereload:
