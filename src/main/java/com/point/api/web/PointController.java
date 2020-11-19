@@ -2,6 +2,7 @@ package com.point.api.web;
 
 import com.point.api.domain.Point;
 import com.point.api.domain.service.PointService;
+import com.point.api.repository.PointRepository;
 import com.point.api.web.dto.PointAddDto;
 import com.point.api.web.dto.PointDto;
 import com.point.api.web.message.ErrorMessage;
@@ -26,13 +27,39 @@ public class PointController {
         return pointService.getAllPoint().stream().map(point -> new PointDto(point)).collect(Collectors.toList());
     }
 
-    @PostMapping
-    public PointDto addPoint(@RequestBody PointAddDto pointAddDto){
+    @PostMapping("/addPoint") //현재까지 point를 기준없이 누적 카운트
+    public PointDto addPoint(@RequestBody PointAddDto pointAddDto) {
         Point newPoint = pointAddDto.toDomain();
-        newPoint.setPoint(100); // 이부분에 계산한 값이 들어가야함
+
+        //완료된 Todo 개수 전체 카운트
+        List<Point> completeTodo = pointService.getAllPoint();
+
+        int completeTodoCnt = completeTodo.size();
+        //인정점수 max 100점, todo 개수 max 4개 (todo 개당 25점.)
+        if (completeTodoCnt > 4) {
+            completeTodoCnt = 4;
+        }
+        int todoPoint = completeTodoCnt*25;
+        int likeTotalCnt=0;
+        int likePoint=0;
+        //좋아요 개수 전체 카운트
+        for(int i=0; i<completeTodoCnt; i++) {
+            likeTotalCnt = completeTodo.get(i).getLikeCount();
+        }
+
+        if(likeTotalCnt>50) likePoint=5;
+        else if(likeTotalCnt>=1) {
+            likePoint = likeTotalCnt/10;
+        }
+        else likePoint=0;
+        //계산한 todo 포인트 + 좋아요 포인트를 합산
+        int totalPoint = todoPoint + likePoint;
+        //점수 셋팅.
+        newPoint.setPoint(totalPoint);
 
         return new PointDto(pointService.addPoint(newPoint));
     }
+
 
 
     @ExceptionHandler(RuntimeException.class)
