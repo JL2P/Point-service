@@ -22,8 +22,8 @@ public class Oauth2ResourceServerConfig extends ResourceServerConfigurerAdapter 
     public void configure(HttpSecurity http) throws Exception {
         http.headers().frameOptions().disable();
         http.authorizeRequests()
-                .antMatchers("/api/**").access("#oauth2.hasScope('read')")
-//                .antMatchers("/**").permitAll()
+//                .antMatchers("/api/**").access("#oauth2.hasScope('read')")
+                .antMatchers("/**").permitAll()
                 .antMatchers("/v2/api-docs","/swagger-resources/**", "/swagger-ui.html", "/webjars/**", "/swagger/**").permitAll()
                 .anyRequest().authenticated();
     }

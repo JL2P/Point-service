@@ -18,6 +18,6 @@ public class Point extends CommonDateEntity{
     private String accountId; // 유저 아이디
     private String todoId;    // 완료한 TodoId
     private int likeCount;   // 완료를 누른 시점의 좋아요 갯수
-    private int point;    // 계획을 완료함으로써 얻는 총 포인트
+    private int point;    // 계획을 완료함으로써 얻는 총 포인트(서버에서 계산)
 }
 
