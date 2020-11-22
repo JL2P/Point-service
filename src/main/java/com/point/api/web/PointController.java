@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,12 @@ public class PointController {
     @PostMapping("/addPoint") //현재까지 point를 기준없이 누적 카운트
     public PointDto addPoint(@RequestBody PointAddDto pointAddDto) {
         Point newPoint = pointAddDto.toDomain();
+
+        /*
+        * SELECT * FROM POINT
+        * WHERE accountId = account
+        * and created == 오늘날짜
+        * */
 
         //완료된 Todo 개수 전체 카운트
         List<Point> completeTodo = pointService.getAllPoint();
@@ -60,6 +67,35 @@ public class PointController {
         return new PointDto(pointService.addPoint(newPoint));
     }
 
+
+    @PostMapping()
+    public PointDto giveApoint(@RequestBody PointAddDto pointAddDto) {
+        Point point = pointAddDto.toDomain();
+
+        String accountId = pointAddDto.getAccountId();
+        int likeCount= pointAddDto.getLikeCount();
+        int pointValue = 0;
+
+        // 오늘 하루동안 완료한 갯수 가져오기
+        int todayCompletedCount = pointService.getTodayCompletedCount(accountId);
+
+        // 오늘 하루동안 완료한 갯수가 4개 미만일 경우 점수 계산
+        if(todayCompletedCount < 4){
+
+            // 좋아요를 통한 점수는 최대 5점까지
+            if(likeCount >= 50) pointValue = 5;
+            else {
+                pointValue = likeCount/10;
+            }
+            //기본점수 25점
+            pointValue+=25;
+        }
+
+        // 계산된 점수 세팅
+        point.setPoint(pointValue);
+        // 점수 생성
+        return new PointDto(pointService.addPoint(point));
+    }
 
 
     @ExceptionHandler(RuntimeException.class)
