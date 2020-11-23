@@ -97,6 +97,27 @@ public class PointController {
         return new PointDto(pointService.addPoint(point));
     }
 
+    //유저의 전체 점수를 날짜별로 조회
+    public int getPointByDate (@RequestBody PointDto pointDto) {
+        String accountId = pointDto.getAccountId();
+        LocalDateTime created = pointDto.getCreated();
+
+        List<Point> pointList =  pointService.getUserAllPointByDate(accountId, created);
+        int point=0;
+
+        for(int i=0; i<pointList.size(); i++) {
+            point += pointList.get(i).getPoint();
+        }
+
+        return point;
+        //근데 여기서 point 값 산정해서 리턴하는 것보다 List<Point>로 리턴해서 레파지토리에서 계산해주는게 나을거같다.
+    }
+
+    //유저 점수 부여 취소
+
+
+
+
 
     @ExceptionHandler(RuntimeException.class)
     public @ResponseBody
