@@ -12,4 +12,8 @@ public interface PointRepository extends JpaRepository<Point, Long> {
     public Optional<Point> findByAccountIdAndTodoId(String accountId, String todoId);
 
     public List<Point> findAllByAccountIdAndCreatedBetween(String accountId, LocalDateTime start, LocalDateTime end);
+    public  List<Point> findAllByAccountIdAndCreated(String accountId, LocalDateTime created);
+
+
+    void delete(Optional<Point> deletePoint);
 }
