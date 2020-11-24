@@ -4,19 +4,28 @@ import com.point.api.domain.Point;
 import com.point.api.domain.service.PointService;
 import com.point.api.exception.PointExistException;
 import com.point.api.repository.PointRepository;
+import com.point.api.repository.RankRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class PointServiceImpl implements PointService {
     private final PointRepository pointRepository;
+
+//    Pageable sortedByPointAsc = PageRequest.of(0,30, Sort.by("point").ascending());
+
 
     @Override
     public List<Point> getAllPoint() {
@@ -29,7 +38,6 @@ public class PointServiceImpl implements PointService {
         if (!pointRepository.findByAccountIdAndTodoId(point.getAccountId(), point.getTodoId()).isEmpty()) {
             throw new PointExistException("이미 점수가 반영되었습니다.");
         }
-
         return pointRepository.save(point);
     }
 
@@ -41,20 +49,42 @@ public class PointServiceImpl implements PointService {
         return pointRepository.findAllByAccountIdAndCreatedBetween(accountId, startDatetime, endDatetime).size();
     }
 
+    //유저의 모든 점수 조회
+    @Override
+    public List<Point> getUserAllPoint (String accountId) {
+        List<Point> pointList = pointRepository.findByAccountId(accountId);
+        return pointList;
+
+    }
+
     //유저의 모든 점수를 날짜 별로 조회
     @Override
     public List<Point> getUserAllPointByDate(String accountId, LocalDateTime created) {
-        List<Point> pointList = pointRepository.findAllByAccountIdAndCreated(accountId, created);
+        LocalDateTime startDatetime = created.of(created.toLocalDate(), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = created.of(created.toLocalDate(), LocalTime.of(23, 59, 59));
+        List<Point> pointList = pointRepository.findAllByAccountIdAndCreatedBetween(accountId, startDatetime, endDatetime);
 
         return pointList;
     }
+
+    //전체 유저 랭킹 조회
+    @Override
+    public List<Point> getUserAllRanking () {
+        List<Point> pointList = pointRepository.findAllWithCustomOrderBy(Sort.by(Sort.Direction.DESC, "point"));
+        return pointList;
+    }
+
+    //Pageable sortedByPointAsc = PageRequest.of(0,30, Sort.by("point").ascending());
+
+
+
 
 
     //점수 부여 취소
     @Override
     public void cancelPoint(String accountId, String todoId) {
 
-        Optional<Point> deletePoint = pointRepository.findByAccountIdAndTodoId(accountId, todoId);
+        Point deletePoint = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow(()->new NoSuchElementException());
 
         pointRepository.delete(deletePoint);
 
