@@ -11,4 +11,8 @@ public interface GroupPointService {
     public GroupPoint addGroupPoint(GroupPoint groupPoint);
 
     //그룹에 포인트를 추가한다(그룹 기여도)
+    //그룹의 모든 점수를 날짜 별로 조회
+    public int getTodayCompletedCount(String accountId);
+    public List<GroupPoint> getGroupAllPoint(String GroupId);
+
 }

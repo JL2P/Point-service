@@ -16,7 +16,13 @@ public interface PointService {
     //오늘 완료한 계획의 갯수를 계산한다.
     public int getTodayCompletedCount(String accountId);
 
+    //유저의 모든 점수를 전체 조회
+    public List<Point> getUserAllPoint(String accountId);
+    //유저의 모든 점수를 날짜별로 조회
     public List<Point> getUserAllPointByDate(String accountId, LocalDateTime created);
+
+    //전체 유저 랭킹 조회
+    public List<Point> getUserAllRanking ();
 
     //점수 부여 취소
     public void cancelPoint (String accountId, String todoId);
