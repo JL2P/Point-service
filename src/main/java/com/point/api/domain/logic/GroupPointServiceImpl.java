@@ -41,12 +41,17 @@ public class GroupPointServiceImpl implements GroupPointService {
 
     }
 
-    //그룹의 모든 점수 조회
+    //그룹의 모든 점수 조회 (리턴받은 리스트로 누적점수 계산은 프론트에서 함)
     @Override
     public List<GroupPoint> getGroupAllPoint(String groupId) {
         List<GroupPoint> pointList = groupPointRepository.findByGroupId(groupId);
         return pointList;
     }
+
+    //
+
+
+
 
 
 }
