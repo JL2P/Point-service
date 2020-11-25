@@ -49,15 +49,15 @@ public class PointServiceImpl implements PointService {
         return pointRepository.findAllByAccountIdAndCreatedBetween(accountId, startDatetime, endDatetime).size();
     }
 
-    //유저의 모든 점수 조회(리턴받은 리스트로 누적점수 계산은 프론트에서 함.)
+    //유저의 모든 점수 조회
     @Override
     public List<Point> getUserAllPoint (String accountId) {
         List<Point> pointList = pointRepository.findByAccountId(accountId);
-
         return pointList;
+
     }
 
-    //특정 날짜 유저의 모든 점수 조회
+    //유저의 모든 점수를 날짜 별로 조회
     @Override
     public List<Point> getUserAllPointByDate(String accountId, LocalDateTime created) {
         LocalDateTime startDatetime = created.of(created.toLocalDate(), LocalTime.of(0, 0, 0));
@@ -66,7 +66,6 @@ public class PointServiceImpl implements PointService {
 
         return pointList;
     }
-
 
     //요청한 날짜 사이의 모든 점수
     @Override
@@ -91,15 +90,14 @@ public class PointServiceImpl implements PointService {
 
 
 
+
     //점수 부여 취소
     @Override
     public void cancelPoint(String accountId, String todoId) {
+
         Point deletePoint = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow(()->new NoSuchElementException());
 
         pointRepository.delete(deletePoint);
 
     }
-
-
-
 }
