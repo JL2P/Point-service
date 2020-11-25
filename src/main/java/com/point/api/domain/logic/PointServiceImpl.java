@@ -68,6 +68,29 @@ public class PointServiceImpl implements PointService {
     }
 
 
+    //요청한 날짜 사이의 모든 점수
+    @Override
+    public List<Point> allListsWithinThePeriod(String accountId, LocalDateTime start, LocalDateTime end){
+        LocalDateTime startDatetime = start.of(start.toLocalDate(), LocalTime.of(0, 0, 0));
+        LocalDateTime endDatetime = end.of(end.toLocalDate(), LocalTime.of(23, 59, 59));
+        List<Point> pointList = pointRepository.findAllByAccountIdAndCreatedBetween(accountId, startDatetime, endDatetime);
+        return pointList;
+    }
+
+
+
+    //전체 유저 랭킹 조회
+    @Override
+    public List<Point> getUserAllRanking () {
+        List<Point> pointList = pointRepository.findAllWithCustomOrderBy(Sort.by(Sort.Direction.DESC, "point"));
+        return pointList;
+    }
+
+    //Pageable sortedByPointAsc = PageRequest.of(0,30, Sort.by("point").ascending());
+
+
+
+
     //점수 부여 취소
     @Override
     public void cancelPoint(String accountId, String todoId) {

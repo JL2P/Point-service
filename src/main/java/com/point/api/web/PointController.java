@@ -5,10 +5,7 @@ import com.point.api.domain.Rank;
 import com.point.api.domain.service.PointService;
 import com.point.api.domain.service.RankService;
 import com.point.api.repository.PointRepository;
-import com.point.api.web.dto.PointAddDto;
-import com.point.api.web.dto.PointDto;
-import com.point.api.web.dto.RankAddDto;
-import com.point.api.web.dto.RankDto;
+import com.point.api.web.dto.*;
 import com.point.api.web.message.ErrorMessage;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -144,6 +141,32 @@ public class PointController {
         return point;
 
     }
+
+    // 유저의 특정 날짜 사이의 점수
+    /*
+    * {
+    *   String accountId;
+    *   LocalDateTime startTime;
+    *   LocalDateTime endTime;
+    * }
+    */
+    @PostMapping("/dateterm")
+    public int getTimeTermAllPoint(@RequestBody TimeTermDto timeTermDto){
+        String accountId = timeTermDto.getAccountId();
+        LocalDateTime startTime = timeTermDto.getStartTime();
+        LocalDateTime endTime = timeTermDto.getEndTime();
+
+        List<Point> pointList =  pointService.allListsWithinThePeriod(accountId, startTime, endTime);
+        int point=0;
+
+        for(int i=0; i<pointList.size(); i++) {
+            point += pointList.get(i).getPoint();
+        }
+
+        return point;
+    }
+
+
 
     //유저 점수 부여 취소
     @DeleteMapping("/cancel")
