@@ -26,11 +26,11 @@ public class PointController {
     private final PointService pointService;
     private final RankService rankService;
 
-//    // PointList 정상적으로 조회 되는지 테스트
-//    @GetMapping()
-//    public List<PointDto> getPointTest(){
-//        return pointService.getAllPoint().stream().map(point -> new PointDto(point)).collect(Collectors.toList());
-//    }
+    // PointList 정상적으로 조회 되는지 테스트
+    @GetMapping()
+    public List<PointDto> getPointTest(){
+        return pointService.getAllPoint().stream().map(point -> new PointDto(point)).collect(Collectors.toList());
+    }
 
 //    @PostMapping("/addPoint") //현재까지 point를 기준없이 누적 카운트
 //    public PointDto addPoint(@RequestBody PointAddDto pointAddDto) {
@@ -106,7 +106,7 @@ public class PointController {
 
     //유저의 전체 점수를 전체 조회
     @GetMapping("/{accountId}")
-    public List<PointDto> getUserPoint(@PathVariable String accountId) {
+    public List<PointDto> getUserPointList(@PathVariable String accountId) {
         System.out.println(accountId);
         List<Point> pointList = pointService.getUserAllPoint(accountId);
 

@@ -21,18 +21,54 @@ public class GroupPointController {
 
 
     // GroupPointList 정상적으로 조회 되는지 테스트
-    @GetMapping()
+    @GetMapping("")
     public List<GroupPointDto> getPointTest(){
         return groupPointService.getAllGroupPoint().stream().map(GroupPoint -> new GroupPointDto(GroupPoint)).collect(Collectors.toList());
     }
 
-    @PostMapping
+    //그룹포인트 산정 후 그룹점수 이력 추가
+    @PostMapping("")
     public GroupPointDto addPoint(@RequestBody GroupPointAddDto groupPointAddDto){
-        GroupPoint newGroupPoint = groupPointAddDto.toDomain();
-        newGroupPoint.setPoint(100); // 이부분에 계산한 값이 들어가야함
+        GroupPoint groupPoint = groupPointAddDto.toDomain();
+        String groupId = groupPointAddDto.getGroupId();
+        String accountId = groupPointAddDto.getAccountId();
+        int likeCount = groupPointAddDto.getLikeCount();
 
-        return new GroupPointDto(groupPointService.addGroupPoint(newGroupPoint));
+        int pointValue = 0;
+
+        //오늘 하루동안 완료한  개수 가져오기
+        int todayCompletedCount = groupPointService.getTodayCompletedCount(groupId);
+
+        // 오늘 하루동안 완료한 갯수가 4개 미만일 경우 점수 계산
+        if(todayCompletedCount < 4){
+
+            // 좋아요를 통한 점수는 최대 5점까지
+            if(likeCount >= 50) pointValue = 5;
+            else {
+                pointValue = likeCount/10;
+            }
+            //기본점수 25점
+            pointValue+=25;
+        }
+        // 계산된 점수 세팅
+        groupPoint.setPoint(pointValue);
+        // 점수 생성
+        GroupPointDto groupPointDto = new GroupPointDto(groupPointService.addGroupPoint(groupPoint));
+
+        return groupPointDto;
     }
+
+    //그룹 점수 전체 이력 조회
+    @GetMapping("/{groupId}")
+    public List<GroupPointDto> getGroupPointList (@PathVariable String groupId) {
+        List<GroupPoint> groupPointList = groupPointService.getGroupAllPoint(groupId);
+        return groupPointList.stream().map(groupPoint -> new GroupPointDto(groupPoint)).collect(Collectors.toList());
+    }
+
+
+   //그룹별 랭킹 조회
+
+
 
     @ExceptionHandler(RuntimeException.class)
     public @ResponseBody

@@ -9,6 +9,6 @@ import java.util.Optional;
 
 public interface GroupPointRepository extends JpaRepository<GroupPoint, Long> {
     public Optional<GroupPoint> findByAccountIdAndTodoId(String accountId, String todoId);
-    public List<GroupPoint> findAllByAccountIdAndCreatedBetween(String accountId, LocalDateTime start, LocalDateTime end);
-    public List<GroupPoint> findByAccountId(String accountId);
+    public List<GroupPoint> findAllByGroupIdAndCreatedBetween(String accountId, LocalDateTime start, LocalDateTime end);
+    public List<GroupPoint> findByGroupId(String groupId);
 }

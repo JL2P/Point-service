@@ -33,19 +33,20 @@ public class GroupPointServiceImpl implements GroupPointService {
     }
     //
     @Override
-    public int getTodayCompletedCount(String accountId) {
+    public int getTodayCompletedCount(String groupId) {
         LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
-        //오늘 내가 Todo를 완료하며 받은 점수가 몇개 인지 가져온다.
-        return groupPointRepository.findAllByAccountIdAndCreatedBetween(accountId, startDatetime, endDatetime).size();
+        //오늘 그룹 Todo를 완료하며 받은 점수가 몇개 인지 가져온다.
+        return groupPointRepository.findAllByGroupIdAndCreatedBetween(groupId, startDatetime, endDatetime).size();
+
     }
 
     //그룹의 모든 점수 조회
     @Override
     public List<GroupPoint> getGroupAllPoint(String groupId) {
-        List<GroupPoint> pointList = groupPointRepository.findByAccountId(groupId);
+        List<GroupPoint> pointList = groupPointRepository.findByGroupId(groupId);
         return pointList;
-
-
     }
+
+
 }
