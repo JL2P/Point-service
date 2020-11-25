@@ -1,11 +1,16 @@
 package com.point.api.web;
 
 import com.point.api.domain.GroupPoint;
+import com.point.api.domain.GroupRank;
 import com.point.api.domain.service.GroupPointService;
+import com.point.api.domain.service.GroupRankService;
 import com.point.api.web.dto.GroupPointAddDto;
 import com.point.api.web.dto.GroupPointDto;
+import com.point.api.web.dto.GroupRankDto;
 import com.point.api.web.message.ErrorMessage;
 import io.swagger.annotations.Api;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/points/groups/") //컨트롤러 기본 URL
 public class GroupPointController {
     private final GroupPointService groupPointService;
-
+    private final GroupRankService groupRankService;
 
     // GroupPointList 정상적으로 조회 되는지 테스트
     @GetMapping("")
@@ -26,7 +31,7 @@ public class GroupPointController {
         return groupPointService.getAllGroupPoint().stream().map(GroupPoint -> new GroupPointDto(GroupPoint)).collect(Collectors.toList());
     }
 
-    //그룹포인트 산정 후 그룹점수 이력 추가
+    //그룹 점수 산정 후 추가
     @PostMapping("")
     public GroupPointDto addPoint(@RequestBody GroupPointAddDto groupPointAddDto){
         GroupPoint groupPoint = groupPointAddDto.toDomain();
@@ -54,19 +59,24 @@ public class GroupPointController {
         groupPoint.setPoint(pointValue);
         // 점수 생성
         GroupPointDto groupPointDto = new GroupPointDto(groupPointService.addGroupPoint(groupPoint));
+        groupRankService.sumGroupPoint(groupId, pointValue);
+
 
         return groupPointDto;
     }
 
-    //그룹 점수 전체 이력 조회
+    //특정 그룹 점수 리스트 조회
     @GetMapping("/{groupId}")
     public List<GroupPointDto> getGroupPointList (@PathVariable String groupId) {
         List<GroupPoint> groupPointList = groupPointService.getGroupAllPoint(groupId);
         return groupPointList.stream().map(groupPoint -> new GroupPointDto(groupPoint)).collect(Collectors.toList());
     }
 
-
-   //그룹별 랭킹 조회
+    //모든 그룹 랭킹 리스트 조회
+    @GetMapping("/all/groupRanking")
+    public List<GroupRankDto> getGroupAllRanking () {
+        return groupRankService.getGroupAllRanking().stream().map(groupRank -> new GroupRankDto(groupRank)).collect(Collectors.toList());
+    }
 
 
 

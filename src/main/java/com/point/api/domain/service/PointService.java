@@ -22,7 +22,7 @@ public interface PointService {
     public List<Point> getUserAllPointByDate(String accountId, LocalDateTime created);
 
     //전체 유저 랭킹 조회
-    public List<Point> getUserAllRanking ();
+//    public List<Point> getUserAllRanking ();
 
     //점수 부여 취소
     public void cancelPoint (String accountId, String todoId);

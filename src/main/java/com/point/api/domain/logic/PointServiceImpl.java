@@ -53,8 +53,8 @@ public class PointServiceImpl implements PointService {
     @Override
     public List<Point> getUserAllPoint (String accountId) {
         List<Point> pointList = pointRepository.findByAccountId(accountId);
-        return pointList;
 
+        return pointList;
     }
 
     //특정 날짜 유저의 모든 점수 조회
@@ -68,23 +68,15 @@ public class PointServiceImpl implements PointService {
     }
 
 
-    @Override
-    public List<Point> getUserAllRanking () {
-        List<Point> pointList = pointRepository.findAllWithCustomOrderBy(Sort.by(Sort.Direction.DESC, "point"));
-        return pointList;
-    }
-
-    //Pageable sortedByPointAsc = PageRequest.of(0,30, Sort.by("point").ascending());
-
-
-
     //점수 부여 취소
     @Override
     public void cancelPoint(String accountId, String todoId) {
-
         Point deletePoint = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow(()->new NoSuchElementException());
 
         pointRepository.delete(deletePoint);
 
     }
+
+
+
 }

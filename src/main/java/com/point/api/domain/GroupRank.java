@@ -10,12 +10,12 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "groupRanks")
+@Table(name = "group_ranks")
 public class GroupRank {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String groupId;
     private String accountId;
-    private int total;
+    private int groupTotal;
 }
