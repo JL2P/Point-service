@@ -25,7 +25,7 @@ public interface PointService {
     public List<Point> allListsWithinThePeriod(String accountId, LocalDateTime startDatetime, LocalDateTime endDatetime);
 
     //전체 유저 랭킹 조회
-    public List<Point> getUserAllRanking ();
+//    public List<Point> getUserAllRanking ();
 
 
     //점수 부여 취소
