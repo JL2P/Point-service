@@ -2,11 +2,14 @@ package com.point.api.web;
 
 import com.point.api.domain.GroupPoint;
 import com.point.api.domain.GroupRank;
+import com.point.api.domain.InGroupRank;
 import com.point.api.domain.service.GroupPointService;
 import com.point.api.domain.service.GroupRankService;
+import com.point.api.domain.service.InGroupRankService;
 import com.point.api.web.dto.GroupPointAddDto;
 import com.point.api.web.dto.GroupPointDto;
 import com.point.api.web.dto.GroupRankDto;
+import com.point.api.web.dto.InGroupRankDto;
 import com.point.api.web.message.ErrorMessage;
 import io.swagger.annotations.Api;
 import lombok.Getter;
@@ -24,6 +27,7 @@ import java.util.stream.Collectors;
 public class GroupPointController {
     private final GroupPointService groupPointService;
     private final GroupRankService groupRankService;
+    private final InGroupRankService inGroupRankService;
 
     // GroupPointList 정상적으로 조회 되는지 테스트
     @GetMapping("")
@@ -42,7 +46,7 @@ public class GroupPointController {
         int pointValue = 0;
 
         //오늘 하루동안 완료한  개수 가져오기
-        int todayCompletedCount = groupPointService.getTodayCompletedCount(groupId);
+        int todayCompletedCount = groupPointService.getTodayCompletedCount(accountId, groupId);
 
         // 오늘 하루동안 완료한 갯수가 4개 미만일 경우 점수 계산
         if(todayCompletedCount < 4){
@@ -60,6 +64,7 @@ public class GroupPointController {
         // 점수 생성
         GroupPointDto groupPointDto = new GroupPointDto(groupPointService.addGroupPoint(groupPoint));
         groupRankService.sumGroupPoint(groupId, pointValue);
+        inGroupRankService.sumInGroupPoint(accountId, groupId, pointValue);
 
 
         return groupPointDto;
@@ -78,7 +83,11 @@ public class GroupPointController {
         return groupRankService.getGroupAllRanking().stream().map(groupRank -> new GroupRankDto(groupRank)).collect(Collectors.toList());
     }
 
-
+    //특정 그룹 내 유저 랭킹 리스트 조회 --> 리턴된 리스트에서 인덱스로 순위 표시 프론트에서 함.
+    @GetMapping("/all/inGroupRanking/{groupId}")
+    public List<InGroupRankDto> getInGroupAllRanking(@PathVariable String groupId) {
+        return inGroupRankService.getInGroupAllRanking(groupId).stream().map(inGroupRank -> new InGroupRankDto(inGroupRank)).collect(Collectors.toList());
+    }
 
     @ExceptionHandler(RuntimeException.class)
     public @ResponseBody
@@ -87,4 +96,6 @@ public class GroupPointController {
         error.setMessage(e.getMessage());
         return error;
     }
+
+
 }

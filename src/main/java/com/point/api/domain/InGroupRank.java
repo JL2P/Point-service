@@ -4,17 +4,19 @@ import lombok.*;
 
 import javax.persistence.*;
 
+
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Entity
-@Table(name = "group_ranks")
-public class GroupRank {
+@Table(name = "in_group_ranks")
+public class InGroupRank {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private String accountId;
     private String groupId;
-    private int groupTotal;
+    private int inGroupTotal;
 }

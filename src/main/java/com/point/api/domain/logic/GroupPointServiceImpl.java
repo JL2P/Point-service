@@ -26,18 +26,18 @@ public class GroupPointServiceImpl implements GroupPointService {
     @Override
     public GroupPoint addGroupPoint(GroupPoint groupPoint) {
         //이미 반영된 점수가 있을경우 점수를 부여하면 안된다.
-        if (!groupPointRepository.findByAccountIdAndTodoId(groupPoint.getAccountId(), groupPoint.getTodoId()).isEmpty()) {
+        if (!groupPointRepository.findByAccountIdAndGroupIdAndTodoId(groupPoint.getAccountId(),groupPoint.getGroupId(), groupPoint.getTodoId()).isEmpty()) {
             throw new PointExistException("이미 점수가 반영되었습니다.");
         }
         return groupPointRepository.save(groupPoint);
     }
     //
     @Override
-    public int getTodayCompletedCount(String accountId) {
+    public int getTodayCompletedCount(String accountId, String groupId) {
         LocalDateTime startDatetime = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0, 0, 0));
         LocalDateTime endDatetime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
         //오늘 그룹 Todo를 완료하며 받은 점수가 몇개 인지 가져온다.
-        return groupPointRepository.findAllByGroupIdAndCreatedBetween(accountId, startDatetime, endDatetime).size();
+        return groupPointRepository.findAllByAccountIdAndGroupIdAndCreatedBetween(accountId, groupId, startDatetime, endDatetime).size();
 
     }
 
