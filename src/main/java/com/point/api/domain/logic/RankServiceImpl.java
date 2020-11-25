@@ -23,16 +23,9 @@ public class RankServiceImpl implements RankService {
     }
 
 
-    //전체 유저 랭킹 리스트 조회
+    //전체 유저 랭킹 조회
     @Override
     public List<Rank> getUserAllRanking () {
-       return rankRepository.findAll(sortByTotalDesc());
+       return rankRepository.findAll();
     }
-
-
-    private Sort sortByTotalDesc() {
-        return Sort.by(Sort.Direction.DESC, "total");
-    }
-
-    //
 }
