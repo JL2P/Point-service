@@ -70,6 +70,8 @@ public class PointController {
 //    }
 
 
+
+
     @PostMapping("/addPoint")
     public PointDto giveApoint(@RequestBody PointAddDto pointAddDto) {
         Point point = pointAddDto.toDomain();
@@ -169,11 +171,8 @@ public class PointController {
 
 
     //유저 점수 부여 취소
-    @DeleteMapping("/cancel")
-    public void cancelPoint (@RequestBody PointDto pointDto) {
-        String accountId = pointDto.getAccountId();
-        String todoId = pointDto.getTodoId();
-
+    @DeleteMapping("/cancel/{accountId}/{todoId}")
+    public void cancelPoint (@PathVariable String accountId, @PathVariable String todoId) {
         pointService.cancelPoint(accountId, todoId);
 
     }
