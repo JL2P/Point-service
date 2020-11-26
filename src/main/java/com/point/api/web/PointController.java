@@ -12,6 +12,7 @@ import com.point.api.web.dto.RankDto;
 import com.point.api.web.message.ErrorMessage;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -26,11 +27,11 @@ public class PointController {
     private final PointService pointService;
     private final RankService rankService;
 
-//    // PointList 정상적으로 조회 되는지 테스트
-//    @GetMapping()
-//    public List<PointDto> getPointTest(){
-//        return pointService.getAllPoint().stream().map(point -> new PointDto(point)).collect(Collectors.toList());
-//    }
+    // PointList 정상적으로 조회 되는지 테스트
+    @GetMapping()
+    public List<PointDto> getPointTest(){
+        return pointService.getAllPoint().stream().map(point -> new PointDto(point)).collect(Collectors.toList());
+    }
 
 //    @PostMapping("/addPoint") //현재까지 point를 기준없이 누적 카운트
 //    public PointDto addPoint(@RequestBody PointAddDto pointAddDto) {
@@ -104,16 +105,30 @@ public class PointController {
         return pointDto;
     }
 
-    //유저의 전체 점수를 전체 조회
-    @GetMapping("/{accountId}")
-    public List<PointDto> getUserPoint(@PathVariable String accountId) {
-        System.out.println(accountId);
+    //-----수정
+    //유저의 전체 점수 이력을 조회
+    @GetMapping("/pointList/{accountId}")
+    public List<PointDto> getUserAllPointList (@PathVariable String accountId) {
         List<Point> pointList = pointService.getUserAllPoint(accountId);
-
         return pointList.stream().map(point -> new PointDto(point)).collect(Collectors.toList());
     }
 
-    //유저의 전체 점수를 날짜별로 조회
+    //유저의 전체 누적 점수를 조회
+    @GetMapping("/{accountId}")
+    public int getUserAllPoint(@PathVariable String accountId) {
+        System.out.println(accountId);
+        List<Point> pointList = pointService.getUserAllPoint(accountId);
+
+//        return pointList.stream().map(point -> new PointDto(point)).collect(Collectors.toList());
+        int total=0;
+        for(int i=0; i<pointList.size(); i++) {
+            total += pointList.get(i).getPoint();
+        }
+        return total;
+    }
+
+    //특정날짜의 유저 누적 점수를 조회
+    //------
     @PostMapping("/date")
     public int getUserPointByDate (@RequestBody PointDto pointDto) {
         String accountId = pointDto.getAccountId();
@@ -127,7 +142,7 @@ public class PointController {
         }
 
         return point;
-        //근데 여기서 point 값 산정해서 리턴하는 것보다s List<Point>로 리턴해서 레파지토리에서 계산해주는게 나을거같다.
+
     }
 
     //유저 점수 부여 취소
@@ -140,11 +155,12 @@ public class PointController {
 
     }
 
-    //전체 유저 랭킹 조회
+    //전체 유저 랭킹 리스트 조회 (여기서 리턴되는 랭킹 리스트로 프론트에서 순위 표시하기(일단은))
     @GetMapping("/all/ranking")
     public List<RankDto> getAllAccountRanking(){
         return rankService.getUserAllRanking().stream().map(rank-> new RankDto(rank)).collect(Collectors.toList());
     }
+
 
 
 
