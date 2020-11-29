@@ -29,6 +29,11 @@ public class RankServiceImpl implements RankService {
        return rankRepository.findAll(sortByTotalDesc());
     }
 
+    @Override
+    public Rank getMyRank(String accountId){
+        Rank myRank = rankRepository.findByAccountId(accountId).orElse(Rank.builder().accountId(accountId).build());
+        return myRank;
+    }
 
     private Sort sortByTotalDesc() {
         return Sort.by(Sort.Direction.DESC, "total");
