@@ -185,7 +185,10 @@ public class PointController {
 
 
 
-
+    @GetMapping("/myRanking/{accountId}")
+    public RankDto getMyRanking(@PathVariable String accountId){
+        return new RankDto(rankService.getMyRank(accountId));
+    }
 
 
 

@@ -19,6 +19,5 @@ public class RankDto {
         this.rankId = rank.getId();
         this.accountId = rank.getAccountId();
         this.total = rank.getTotal();
-
     }
 }
