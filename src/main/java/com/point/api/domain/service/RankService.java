@@ -9,4 +9,5 @@ public interface RankService {
 
     public Rank sumPoint(String accountId, int point);
     public List<Rank> getUserAllRanking ();
+    public Rank getMyRank(String accountId);
 }
