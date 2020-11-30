@@ -5,6 +5,7 @@ import com.point.api.domain.Point;
 import com.point.api.domain.service.GroupPointService;
 import com.point.api.exception.PointExistException;
 import com.point.api.repository.GroupPointRepository;
+import com.point.api.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,11 +13,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RequiredArgsConstructor
 @Service
 public class GroupPointServiceImpl implements GroupPointService {
     private final GroupPointRepository groupPointRepository;
+    private final PointRepository pointRepository;
 
     @Override
     public List<GroupPoint> getAllGroupPoint() {
@@ -48,10 +51,14 @@ public class GroupPointServiceImpl implements GroupPointService {
         return pointList;
     }
 
+    //그룹점수 삭제
+    @Override
+    public void deleteGroupPoint (String accountId, String groupId, String todoId) {
+        GroupPoint groupPoint = groupPointRepository.findByAccountIdAndGroupIdAndTodoId(accountId, groupId, todoId)
+                .orElseThrow( () -> new NoSuchElementException() );
+        Point point = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow( ()->new NoSuchElementException());
 
-
-
-
-
-
+        groupPointRepository.delete(groupPoint);
+        pointRepository.delete(point);
+    }
 }
