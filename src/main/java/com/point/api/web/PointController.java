@@ -71,30 +71,28 @@ public class PointController {
 //    }
 
 
-
-
     @ApiOperation(value = "개인 점수 추가, 개인 점수 누적", notes = "점수 부여 기준에 맞게 산정된 점수를 point 테이블에 추가, 기존점수+산정된 점수 ranks 테이블에 추가")
     @PostMapping("/addPoint")
     public PointDto giveApoint(@RequestBody PointAddDto pointAddDto) {
         Point point = pointAddDto.toDomain();
 
         String accountId = pointAddDto.getAccountId();
-        int likeCount= pointAddDto.getLikeCount();
+        int likeCount = pointAddDto.getLikeCount();
         int pointValue = 0;
 
         // 오늘 하루동안 완료한 갯수 가져오기
         int todayCompletedCount = pointService.getTodayCompletedCount(accountId);
 
         // 오늘 하루동안 완료한 갯수가 4개 미만일 경우 점수 계산
-        if(todayCompletedCount < 4){
+        if (todayCompletedCount < 4) {
 
             // 좋아요를 통한 점수는 최대 5점까지
-            if(likeCount >= 50) pointValue = 5;
+            if (likeCount >= 50) pointValue = 5;
             else {
-                pointValue = likeCount/10;
+                pointValue = likeCount / 10;
             }
             //기본점수 25점
-            pointValue+=25;
+            pointValue += 25;
         }
 
         // 계산된 점수 세팅
@@ -105,11 +103,11 @@ public class PointController {
         return pointDto;
     }
 
-    
+
     //유저의 전체 점수 이력을 조회
     @ApiOperation(value = "전체 개인 점수 이력 조회", notes = "유저의 전체 개인 점수 이력을 조회")
     @GetMapping("/pointList/{accountId}")
-    public List<PointDto> getUserAllPointList (@PathVariable String accountId) {
+    public List<PointDto> getUserAllPointList(@PathVariable String accountId) {
         List<Point> pointList = pointService.getUserAllPoint(accountId);
         return pointList.stream().map(point -> new PointDto(point)).collect(Collectors.toList());
     }
@@ -122,24 +120,24 @@ public class PointController {
         List<Point> pointList = pointService.getUserAllPoint(accountId);
 
 //        return pointList.stream().map(point -> new PointDto(point)).collect(Collectors.toList());
-        int total=0;
-        for(int i=0; i<pointList.size(); i++) {
+        int total = 0;
+        for (int i = 0; i < pointList.size(); i++) {
             total += pointList.get(i).getPoint();
         }
         return total;
     }
 
-    
+
     @ApiOperation(value = "현재 유저 누적 점수를 조회")
     @PostMapping("/date")
-    public int getUserPointByDate (@RequestBody PointDto pointDto) {
+    public int getUserPointByDate(@RequestBody PointDto pointDto) {
         String accountId = pointDto.getAccountId();
         LocalDateTime created = pointDto.getCreated();
 
-        List<Point> pointList =  pointService.getUserAllPointByDate(accountId, created);
-        int point=0;
+        List<Point> pointList = pointService.getUserAllPointByDate(accountId, created);
+        int point = 0;
 
-        for(int i=0; i<pointList.size(); i++) {
+        for (int i = 0; i < pointList.size(); i++) {
             point += pointList.get(i).getPoint();
         }
 
@@ -183,24 +181,24 @@ public class PointController {
 
     // 유저의 특정 날짜 사이의 점수
     /*
-    * {
-    *   String accountId;
-    *   LocalDateTime startTime;
-    *   LocalDateTime endTime;
-    * }
-    */
+     * {
+     *   String accountId;
+     *   LocalDateTime startTime;
+     *   LocalDateTime endTime;
+     * }
+     */
 
     @ApiOperation(value = "특정 날짜의 유저 총 점수 조회")
     @PostMapping("/dateterm")
-    public int getTimeTermAllPoint(@RequestBody TimeTermDto timeTermDto){
+    public int getTimeTermAllPoint(@RequestBody TimeTermDto timeTermDto) {
         String accountId = timeTermDto.getAccountId();
         LocalDateTime startTime = timeTermDto.getStartTime();
         LocalDateTime endTime = timeTermDto.getEndTime();
 
-        List<Point> pointList =  pointService.allListsWithinThePeriod(accountId, startTime, endTime);
-        int point=0;
+        List<Point> pointList = pointService.allListsWithinThePeriod(accountId, startTime, endTime);
+        int point = 0;
 
-        for(int i=0; i<pointList.size(); i++) {
+        for (int i = 0; i < pointList.size(); i++) {
             point += pointList.get(i).getPoint();
         }
 
@@ -225,39 +223,54 @@ public class PointController {
 //    }
 
 
-
-
     //유저 점수 부여 취소
 
     @ApiOperation(value = "유저 점수 부여 삭제", notes = "accountId와 todoId에 해당되는 점수 취소")
     @DeleteMapping("/cancel/{accountId}/{todoId}")
-    public void cancelPoint (@PathVariable String accountId, @PathVariable String todoId) {
-        pointService.cancelPoint(accountId, todoId);
-    }
-    //해당 점수 찾아서 유저 랭크 점수 다시 셋팅
-    @PostMapping("/cancelRankPoint/{accountId}/{todoId}")
-    public void cancelRankPoint (@PathVariable String accountId, @PathVariable String todoId) {
+    public void cancelPoint(@PathVariable String accountId, @PathVariable String todoId) {
         Point point = pointService.getPoint(accountId, todoId);
         Rank myRank = rankService.getMyRank(accountId);
-        myRank.setTotal(myRank.getTotal() - point.getPoint());
+        System.out.println(point.getPoint());
+
+        int total = 0;
+        total = myRank.getTotal() - point.getPoint();
+        System.out.println(total);
+
+        myRank.setTotal(total);
+
+        pointService.cancelPoint(accountId, todoId);
     }
+
+//    //해당 점수 찾아서 유저 랭크 점수 다시 셋팅
+//    @PutMapping("/cancelRankPoint/{accountId}/{todoId}")
+//    public void cancelRankPoint(@PathVariable String accountId, @PathVariable String todoId) {
+//        Point point = pointService.getPoint(accountId, todoId);
+//        Rank myRank = rankService.getMyRank(accountId);
+//        System.out.println(point.getPoint());
+//
+//        int total = 0;
+//        total = myRank.getTotal() - point.getPoint();
+//        System.out.println(total);
+//
+//        myRank.setTotal(total);
+//
+//
+//    }
 
     //전체 유저 랭킹 리스트 조회 (여기서 리턴되는 랭킹 리스트로 프론트에서 순위 표시하기(일단은))
 
     @ApiOperation(value = "전체 유저 랭킹 리스트 조회", notes = "전체 유저의 전체 랭킹 리스트를 조회한다. 리턴된 유저 랭킹 리스트에서 인덱스로 순위 표시 프론트에서 함.")
     @GetMapping("/all/ranking")
-    public List<RankDto> getAllAccountRanking(){
-        return rankService.getUserAllRanking().stream().map(rank-> new RankDto(rank)).collect(Collectors.toList());
+    public List<RankDto> getAllAccountRanking() {
+        return rankService.getUserAllRanking().stream().map(rank -> new RankDto(rank)).collect(Collectors.toList());
     }
-
 
 
     @ApiOperation(value = "선택한 유저의 랭킹 조회")
     @GetMapping("/myRanking/{accountId}")
-    public RankDto getMyRanking(@PathVariable String accountId){
+    public RankDto getMyRanking(@PathVariable String accountId) {
         return new RankDto(rankService.getMyRank(accountId));
     }
-
 
 
     @ExceptionHandler(RuntimeException.class)
