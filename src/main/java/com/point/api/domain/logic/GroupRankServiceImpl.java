@@ -34,8 +34,4 @@ public class GroupRankServiceImpl implements GroupRankService {
     private Sort sortByGroupTotalDesc() {
         return Sort.by(Sort.Direction.DESC, "groupTotal");
     }
-
-
-
-
 }

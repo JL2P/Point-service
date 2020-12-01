@@ -12,6 +12,7 @@ import com.point.api.web.dto.GroupRankDto;
 import com.point.api.web.dto.InGroupRankDto;
 import com.point.api.web.message.ErrorMessage;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +31,14 @@ public class GroupPointController {
     private final InGroupRankService inGroupRankService;
 
     // GroupPointList 정상적으로 조회 되는지 테스트
+    @ApiOperation(value = "그룹 포인트 테스트", notes = "GroupPointList 정상적으로 조회 되는지 테스트")
     @GetMapping("")
     public List<GroupPointDto> getPointTest(){
         return groupPointService.getAllGroupPoint().stream().map(GroupPoint -> new GroupPointDto(GroupPoint)).collect(Collectors.toList());
     }
 
     //그룹 점수 산정 후 추가
+    @ApiOperation(value = "그룹 점수 이력, 그룹 점수 합산, 내그룹 점수 산정 후 추", notes = "점수 부여 기준에 따라 산정된 점수가 그룹 점수 테이블에 추가, 기존 점수 + 산정된 점수 그룹랭킹 테이블에 추가, 기존 점수+산정된 점수 인그룹 랭킹 테이블에 추가")
     @PostMapping("")
     public GroupPointDto addPoint(@RequestBody GroupPointAddDto groupPointAddDto){
         GroupPoint groupPoint = groupPointAddDto.toDomain();
@@ -70,21 +73,34 @@ public class GroupPointController {
         return groupPointDto;
     }
 
+
+    //그룹 점수 삭제
+    @ApiOperation(value = "그룹 점수 삭제")
+    @GetMapping("cancel/{accountId}/{groupId}/{todoId}")
+    public void cancelGroupPoint (@PathVariable String accountId, @PathVariable String groupId, @PathVariable String todoId) {
+
+        groupPointService.deleteGroupPoint(accountId, groupId, todoId);
+    }
+
+
     //특정 그룹 점수 리스트 조회
-    @GetMapping("/{groupId}")
+    @ApiOperation(value = "특정 그룹 점수 리스트 조회")
+    @GetMapping("{groupI제d}")
     public List<GroupPointDto> getGroupPointList (@PathVariable String groupId) {
         List<GroupPoint> groupPointList = groupPointService.getGroupAllPoint(groupId);
         return groupPointList.stream().map(groupPoint -> new GroupPointDto(groupPoint)).collect(Collectors.toList());
     }
 
     //모든 그룹 랭킹 리스트 조회
+    @ApiOperation(value = "모든 그룹 점수 랭킹 리스트 조회")
     @GetMapping("/all/groupRanking")
     public List<GroupRankDto> getGroupAllRanking () {
         return groupRankService.getGroupAllRanking().stream().map(groupRank -> new GroupRankDto(groupRank)).collect(Collectors.toList());
     }
 
     //특정 그룹 내 유저 랭킹 리스트 조회 --> 리턴된 리스트에서 인덱스로 순위 표시 프론트에서 함.
-    @GetMapping("/all/inGroupRanking/{groupId}")
+    @ApiOperation(value = "특정 그룹 내 유저 랭킹 리스트 조회", notes = "리턴된 리스트에서 인덱스로 순위 표시 프론트에서 함.")
+    @GetMapping("all/inGroupRanking/{groupId}")
     public List<InGroupRankDto> getInGroupAllRanking(@PathVariable String groupId) {
         return inGroupRankService.getInGroupAllRanking(groupId).stream().map(inGroupRank -> new InGroupRankDto(inGroupRank)).collect(Collectors.toList());
     }
