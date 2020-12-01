@@ -8,4 +8,5 @@ import java.util.List;
 public interface GroupRankService {
     public GroupRank sumGroupPoint (String groupId, int point);
     public List<GroupRank> getGroupAllRanking ();
+    public GroupRank getMyGroupRank (String groupId);
 }

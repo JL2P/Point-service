@@ -9,6 +9,7 @@ import com.point.api.repository.PointRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -29,11 +30,12 @@ public class GroupPointServiceImpl implements GroupPointService {
     @Override
     public GroupPoint addGroupPoint(GroupPoint groupPoint) {
         //이미 반영된 점수가 있을경우 점수를 부여하면 안된다.
-        if (!groupPointRepository.findByAccountIdAndGroupIdAndTodoId(groupPoint.getAccountId(),groupPoint.getGroupId(), groupPoint.getTodoId()).isEmpty()) {
-            throw new PointExistException("이미 점수가 반영되었습니다.");
+        if (!groupPointRepository.findByAccountIdAndGroupIdAndTodoId(groupPoint.getAccountId(), groupPoint.getGroupId(), groupPoint.getTodoId()).isEmpty()) {
+            throw new PointExistException("이미 그룹 점수가 반영되었습니다.");
         }
         return groupPointRepository.save(groupPoint);
     }
+
     //
     @Override
     public int getTodayCompletedCount(String accountId, String groupId) {
@@ -53,12 +55,19 @@ public class GroupPointServiceImpl implements GroupPointService {
 
     //그룹점수 삭제
     @Override
-    public void deleteGroupPoint (String accountId, String groupId, String todoId) {
+    public void deleteGroupPoint(String accountId, String groupId, String todoId) {
         GroupPoint groupPoint = groupPointRepository.findByAccountIdAndGroupIdAndTodoId(accountId, groupId, todoId)
-                .orElseThrow( () -> new NoSuchElementException() );
-        Point point = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow( ()->new NoSuchElementException());
+                .orElseThrow(() -> new NoSuchElementException());
+        Point point = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow(() -> new NoSuchElementException());
 
         groupPointRepository.delete(groupPoint);
         pointRepository.delete(point);
+    }
+
+    //특정 그룹포인트 가져오기
+    @Override
+    public GroupPoint getGroupPoint(String accountId, String groupId, String todoId) {
+        GroupPoint groupPoint = groupPointRepository.findByAccountIdAndGroupIdAndTodoId(accountId, groupId, todoId).orElseThrow(() -> new NoSuchElementException());
+        return groupPoint;
     }
 }

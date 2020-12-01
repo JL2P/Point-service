@@ -34,4 +34,10 @@ public class GroupRankServiceImpl implements GroupRankService {
     private Sort sortByGroupTotalDesc() {
         return Sort.by(Sort.Direction.DESC, "groupTotal");
     }
+
+    @Override
+    public GroupRank getMyGroupRank (String groupId) {
+        GroupRank groupRank = groupRankRepository.findByGroupId(groupId).orElse(GroupRank.builder().groupId(groupId).build());;
+        return groupRank;
+    }
 }

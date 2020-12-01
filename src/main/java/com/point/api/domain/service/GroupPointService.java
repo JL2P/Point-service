@@ -15,5 +15,6 @@ public interface GroupPointService {
     public int getTodayCompletedCount(String accountId, String groupId);
     public List<GroupPoint> getGroupAllPoint(String groupId);
     public void deleteGroupPoint(String accountId, String groupId, String todoId);
-
+    //특정 그룹포인트 불러 오기
+    public GroupPoint getGroupPoint(String accountId, String groupId, String todoId);
 }
