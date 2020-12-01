@@ -33,4 +33,6 @@ public interface PointService {
 
    //특정 포인트 찾아오기
    public Point getPoint (String accountId, String todoId);
+
+
 }
