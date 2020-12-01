@@ -39,5 +39,4 @@ public class RankServiceImpl implements RankService {
         return Sort.by(Sort.Direction.DESC, "total");
     }
 
-    //
 }

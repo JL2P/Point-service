@@ -234,6 +234,13 @@ public class PointController {
     public void cancelPoint (@PathVariable String accountId, @PathVariable String todoId) {
         pointService.cancelPoint(accountId, todoId);
     }
+    //해당 점수 찾아서 유저 랭크 점수 다시 셋팅
+    @PostMapping("/cancelRankPoint/{accountId}/{todoId}")
+    public void cancelRankPoint (@PathVariable String accountId, @PathVariable String todoId) {
+        Point point = pointService.getPoint(accountId, todoId);
+        Rank myRank = rankService.getMyRank(accountId);
+        myRank.setTotal(myRank.getTotal() - point.getPoint());
+    }
 
     //전체 유저 랭킹 리스트 조회 (여기서 리턴되는 랭킹 리스트로 프론트에서 순위 표시하기(일단은))
 
