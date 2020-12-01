@@ -96,6 +96,7 @@ public class PointServiceImpl implements PointService {
     @Override
     public void cancelPoint(String accountId, String todoId) {
         Point deletePoint = pointRepository.findByAccountIdAndTodoId(accountId, todoId).orElseThrow(()->new NoSuchElementException());
+        pointRepository.delete(deletePoint);
     }
     //특정 포인트 불러오기
     @Override
