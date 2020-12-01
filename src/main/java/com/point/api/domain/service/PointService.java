@@ -30,4 +30,7 @@ public interface PointService {
 
     //점수 부여 취소
     public void cancelPoint (String accountId, String todoId);
+
+   //특정 포인트 찾아오기
+   public Point getPoint (String accountId, String todoId);
 }
