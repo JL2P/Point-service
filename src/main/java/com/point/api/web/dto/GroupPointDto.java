@@ -17,7 +17,7 @@ public class GroupPointDto {
     public GroupPointDto(GroupPoint groupPoint){
         this.groupPointId = groupPoint.getId();
         this.accountId = groupPoint.getAccountId();
-        this.todoId = groupPoint.getAccountId();
+        this.todoId = groupPoint.getTodoId();
         this.groupId = groupPoint.getGroupId();
         this.likeCount = groupPoint.getLikeCount();
         this.point = groupPoint.getPoint();

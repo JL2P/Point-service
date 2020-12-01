@@ -17,4 +17,5 @@ public interface PointRepository extends JpaRepository<Point, Long> {
     public List<Point> findByAccountId(String accountId);
     List<Point> findAllWithCustomOrderBy(Sort sort);
     List<Point> findAllByPoint (int point, Pageable pageable); //PagindAndSortingRepository를 확장한 JpaRepository 사용해도 된다.
+    public Optional<Point> findByTodoId(String todoId);
 }

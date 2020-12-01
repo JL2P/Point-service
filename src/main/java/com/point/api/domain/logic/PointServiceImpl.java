@@ -35,8 +35,8 @@ public class PointServiceImpl implements PointService {
     @Override
     public Point addPoint(Point point) throws PointExistException {
         //이미 반영된 점수가 있을경우 점수를 부여하면 안된다.
-        if (!pointRepository.findByAccountIdAndTodoId(point.getAccountId(), point.getTodoId()).isEmpty()) {
-            throw new PointExistException("이미 점수가 반영되었습니다.");
+        if (!pointRepository.findByTodoId(point.getTodoId()).isEmpty()) {
+            throw new PointExistException("이미 개인 점수가 반영되었습니다.");
         }
         return pointRepository.save(point);
     }

@@ -1,11 +1,7 @@
 package com.point.api.web;
 
-import com.point.api.domain.GroupPoint;
-import com.point.api.domain.GroupRank;
-import com.point.api.domain.InGroupRank;
-import com.point.api.domain.service.GroupPointService;
-import com.point.api.domain.service.GroupRankService;
-import com.point.api.domain.service.InGroupRankService;
+import com.point.api.domain.*;
+import com.point.api.domain.service.*;
 import com.point.api.web.dto.GroupPointAddDto;
 import com.point.api.web.dto.GroupPointDto;
 import com.point.api.web.dto.GroupRankDto;
@@ -29,6 +25,9 @@ public class GroupPointController {
     private final GroupPointService groupPointService;
     private final GroupRankService groupRankService;
     private final InGroupRankService inGroupRankService;
+
+    private final PointService pointService;
+    private final RankService rankService;
 
     // GroupPointList 정상적으로 조회 되는지 테스트
     @ApiOperation(value = "그룹 포인트 테스트", notes = "GroupPointList 정상적으로 조회 되는지 테스트")
@@ -65,19 +64,36 @@ public class GroupPointController {
         // 계산된 점수 세팅
         groupPoint.setPoint(pointValue);
         // 점수 생성
+        //Group Point Up
         GroupPointDto groupPointDto = new GroupPointDto(groupPointService.addGroupPoint(groupPoint));
         groupRankService.sumGroupPoint(groupId, pointValue);
         inGroupRankService.sumInGroupPoint(accountId, groupId, pointValue);
 
+        //개인 점수 부여
+        Point point = Point.builder()
+                .likeCount(groupPointDto.getLikeCount())
+                .todoId(groupPointDto.getTodoId())
+                .accountId(groupPointDto.getAccountId())
+                .point(groupPointDto.getPoint()).build();
+
+        pointService.addPoint(point);
+        rankService.sumPoint(point.getAccountId(), point.getPoint());
 
         return groupPointDto;
     }
 
 
-    //그룹 점수 삭제
+    //그룹 점수 삭제 + 그룹 랭킹 점수 다시 셋팅
     @ApiOperation(value = "그룹 점수 삭제")
-    @GetMapping("cancel/{accountId}/{groupId}/{todoId}")
+    @DeleteMapping("cancel/{accountId}/{groupId}/{todoId}")
     public void cancelGroupPoint (@PathVariable String accountId, @PathVariable String groupId, @PathVariable String todoId) {
+        GroupPoint groupPoint = groupPointService.getGroupPoint(accountId, groupId, todoId);
+        GroupRank myGroupRank = groupRankService.getMyGroupRank(groupId);
+        int groupTotal = 0;
+
+        groupTotal =  myGroupRank.getGroupTotal() - groupPoint.getPoint();
+        myGroupRank.setGroupTotal(groupTotal);
+        myGroupRank.getGroupTotal();
 
         groupPointService.deleteGroupPoint(accountId, groupId, todoId);
     }
@@ -85,7 +101,7 @@ public class GroupPointController {
 
     //특정 그룹 점수 리스트 조회
     @ApiOperation(value = "특정 그룹 점수 리스트 조회")
-    @GetMapping("{groupI제d}")
+    @GetMapping("{groupId}")
     public List<GroupPointDto> getGroupPointList (@PathVariable String groupId) {
         List<GroupPoint> groupPointList = groupPointService.getGroupAllPoint(groupId);
         return groupPointList.stream().map(groupPoint -> new GroupPointDto(groupPoint)).collect(Collectors.toList());
